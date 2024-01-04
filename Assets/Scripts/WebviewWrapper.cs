@@ -33,7 +33,6 @@ public class WebviewWrapper : MonoBehaviour
                     resizeFrame = true;
                 };
 
-
                 webView.Show();
                 webView.OnMultipleWindowOpened += (view, id) => { webView.Load(view.Url); };
                 webView.SetSupportMultipleWindows(true, true);
