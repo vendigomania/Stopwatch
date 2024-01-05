@@ -14,7 +14,7 @@ public class FireBaseWrapper : MonoBehaviour
             dependencyStatus = task.Result;
             if (dependencyStatus == Firebase.DependencyStatus.Available)
             {
-                InitializeFirebase();
+                Firebase.FirebaseApp app = Firebase.FirebaseApp.DefaultInstance;
             }
             else
             {
@@ -29,11 +29,6 @@ public class FireBaseWrapper : MonoBehaviour
     }
 
     #region remote config
-
-    void InitializeFirebase()
-    {
-        Debug.Log("RemoteConfig configured and ready!");
-    }
 
     public Task FetchDataAsync()
     {
