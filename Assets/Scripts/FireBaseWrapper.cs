@@ -2,30 +2,34 @@ using Firebase.Extensions;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class FireBaseWrapper : MonoBehaviour
 {
+    [SerializeField] private Text logText;
+
     Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
 
     // Start is called before the first frame update
     public void Initialize(UnityAction<bool> _callback)
     {
-        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
             dependencyStatus = task.Result;
             if (dependencyStatus == Firebase.DependencyStatus.Available)
             {
                 Firebase.FirebaseApp app = Firebase.FirebaseApp.DefaultInstance;
+
+                Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
+                Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
             }
             else
             {
-                Debug.LogError(
-                  "Could not resolve all Firebase dependencies: " + dependencyStatus);
+                logText.text += System.String.Format(
+                  "Could not resolve all Firebase dependencies: {0}\n", dependencyStatus);
+                // Firebase Unity SDK is not safe to use here.
             }
             _callback?.Invoke(dependencyStatus == Firebase.DependencyStatus.Available);
         });
-
-        Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
-        Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
     }
 
     #region remote config
