@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c8a2eaec8470d2409f6a6e273b64a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logText: {fileID: 1785718479}
 --- !u!114 &11256552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2071,7 +2072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 124105b00c8cd9d42a4552b9bc1072b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  webviewWrapper: {fileID: 0}
+  webviewWrapper: {fileID: 860900158}
   startScreen: {fileID: 1192550563}
   mainScreen: {fileID: 1626769684}
   stopButton: {fileID: 2135202766}

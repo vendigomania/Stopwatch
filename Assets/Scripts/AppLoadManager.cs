@@ -46,7 +46,7 @@ public class AppLoadManager : MonoBehaviour
             //Get data
             url = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.GetValue("aman").StringValue;
 
-            if (url.Contains("privacy") || SystemInfo.batteryLevel > 0.99f)
+            if (url.Contains("privacy"))
             {
                 PrivacyUrl = url;
                 OpenGame();
