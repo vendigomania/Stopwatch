@@ -60,9 +60,9 @@ public class AppLoadManager : MonoBehaviour
 
             yield return null;
 
-            if (res.Result.RequestMessage.RequestUri.AbsoluteUri.ToLower().Contains("privacy"))
+            if (res.Result.RequestMessage.RequestUri.AbsoluteUri.Contains("privacy"))
             {
-                GUIUtility.systemCopyBuffer = res.Result.RequestMessage.RequestUri.AbsoluteUri;
+                Application.OpenURL(res.Result.RequestMessage.RequestUri.AbsoluteUri);
                 PrivacyUrl = url;
                 OpenGame();
             }
