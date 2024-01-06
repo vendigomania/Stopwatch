@@ -2,33 +2,37 @@ using Firebase.Extensions;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class FireBaseWrapper : MonoBehaviour
 {
+    [SerializeField] private Text logText;
+
     Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
 
     // Start is called before the first frame update
     public void Initialize(UnityAction<bool> _callback)
     {
-        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
             dependencyStatus = task.Result;
             if (dependencyStatus == Firebase.DependencyStatus.Available)
             {
-                InitializeFirebase();
+                Firebase.FirebaseApp app = Firebase.FirebaseApp.DefaultInstance;
+
+                Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
+                Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
             }
             else
             {
-                Debug.LogError(
-                  "Could not resolve all Firebase dependencies: " + dependencyStatus);
+                logText.text += System.String.Format(
+                  "Could not resolve all Firebase dependencies: {0}\n", dependencyStatus);
+                // Firebase Unity SDK is not safe to use here.
             }
             _callback?.Invoke(dependencyStatus == Firebase.DependencyStatus.Available);
         });
     }
 
-    void InitializeFirebase()
-    {
-        Debug.Log("RemoteConfig configured and ready!");
-    }
+    #region remote config
 
     public Task FetchDataAsync()
     {
@@ -82,4 +86,21 @@ public class FireBaseWrapper : MonoBehaviour
                 break;
         }
     }
+
+    #endregion
+
+
+    #region notifications
+
+    public void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token)
+    {
+        UnityEngine.Debug.Log("Received Registration Token: " + token.Token);
+    }
+
+    public void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e)
+    {
+        UnityEngine.Debug.Log("Received a new message from: " + e.Message.From);
+    }
+
+    #endregion
 }

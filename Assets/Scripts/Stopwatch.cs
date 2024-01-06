@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class Stopwatch : MonoBehaviour
 {
+    [SerializeField] private WebviewWrapper webviewWrapper;
     [SerializeField] private GameObject startScreen;
 
     [SerializeField] private GameObject mainScreen;
@@ -40,7 +41,7 @@ public class Stopwatch : MonoBehaviour
 
     public void OpenPrivacy()
     {
-
+        webviewWrapper.OpenView(AppLoadManager.PrivacyUrl);
     }
 
     public void Next()
