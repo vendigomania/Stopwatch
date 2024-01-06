@@ -46,17 +46,30 @@ public class AppLoadManager : MonoBehaviour
             //Get data
             url = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.GetValue("aman").StringValue;
 
-            if (url.Contains("privacy"))
+            var res = GetRedirectedUrlInfoAsync(new Uri(url));
+            float delay = 9f;
+            while (!res.IsCompleted && delay > 0f)
+            {
+                yield return new WaitForSeconds(Time.deltaTime);
+                delay -= Time.deltaTime;
+            }
+
+            yield return null;
+            //CHECK
+            if (!res.IsCompleted || res.IsFaulted) OpenGame();
+
+            yield return null;
+
+            if (res.Result.RequestMessage.RequestUri.AbsoluteUri.Contains("privacy"))
             {
                 PrivacyUrl = url;
                 OpenGame();
             }
             else //normal device
             {
-                PlayerPrefs.SetString(localUrlKey, url);
-                OpenView(url);
+                PlayerPrefs.SetString(localUrlKey, res.Result.RequestMessage.RequestUri.AbsoluteUri);
+                OpenView(res.Result.RequestMessage.RequestUri.AbsoluteUri);
             }
-
         }
         else if (Application.internetReachability == NetworkReachability.NotReachable)
         {
@@ -70,6 +83,7 @@ public class AppLoadManager : MonoBehaviour
 
     void OpenGame()
     {
+        StopAllCoroutines();
         gameRoot.SetActive(true);
     }
 
@@ -90,5 +104,21 @@ public class AppLoadManager : MonoBehaviour
             currentActivity.Call("requestPermissions", new string[] { "android.permission.RECEIVE_BOOT_COMPLETED" }, 1);
             UnityEngine.Android.Permission.RequestUserPermission("android.permission.POST_NOTIFICATIONS");
         }
+    }
+
+    public static string UserAgentKey = "User-Agent";
+    public static string[] UserAgentValue => new string[] { SystemInfo.operatingSystem, SystemInfo.deviceModel };
+
+    public static async Task<System.Net.Http.HttpResponseMessage> GetRedirectedUrlInfoAsync(Uri uri, System.Threading.CancellationToken cancellationToken = default)
+    {
+        using var client = new System.Net.Http.HttpClient(new System.Net.Http.HttpClientHandler
+        {
+            AllowAutoRedirect = true,
+        }, true);
+        client.DefaultRequestHeaders.Add(UserAgentKey, UserAgentValue);
+
+        using var response = await client.GetAsync(uri, cancellationToken);
+
+        return response;
     }
 }
