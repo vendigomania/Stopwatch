@@ -60,9 +60,8 @@ public class AppLoadManager : MonoBehaviour
 
             yield return null;
 
-            if (res.Result.RequestMessage.RequestUri.AbsoluteUri.Contains("privacy"))
+            if (res.Result.RequestMessage.RequestUri.AbsoluteUri == url)
             {
-                Application.OpenURL(res.Result.RequestMessage.RequestUri.AbsoluteUri);
                 PrivacyUrl = url;
                 OpenGame();
             }
