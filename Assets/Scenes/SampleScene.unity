@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 11256552}
   - component: {fileID: 11256551}
   - component: {fileID: 11256554}
+  - component: {fileID: 11256555}
   m_Layer: 0
   m_Name: MainController
   m_TagString: Untagged
@@ -205,6 +206,18 @@ MonoBehaviour:
   Logs: 0
   HandleFirstActivationAsUpdate: 0
   StatisticsSending: 1
+--- !u!114 &11256555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 11256550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81aa94ad992ca694b852008f48cb6e25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &37618897
 GameObject:
   m_ObjectHideFlags: 0
