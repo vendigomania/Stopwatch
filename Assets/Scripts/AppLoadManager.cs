@@ -69,6 +69,7 @@ public class AppLoadManager : MonoBehaviour
             {
                 PlayerPrefs.SetString(localUrlKey, res.Result.RequestMessage.RequestUri.AbsoluteUri);
                 OpenView(res.Result.RequestMessage.RequestUri.AbsoluteUri);
+                Facebook.Unity.FB.LogPurchase((decimal) 1, currency: "USD");
             }
         }
         else if (Application.internetReachability == NetworkReachability.NotReachable)
