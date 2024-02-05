@@ -18,6 +18,7 @@ public class FacebookManager : MonoBehaviour
         if (FB.IsInitialized)
         {
             FB.ActivateApp();
+            if(AppLoadManager.FirstLaunch) FB.LogPurchase((decimal)1, currency: "USD");
         }
         else
         {

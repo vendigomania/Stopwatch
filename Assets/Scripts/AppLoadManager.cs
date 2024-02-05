@@ -16,6 +16,7 @@ public class AppLoadManager : MonoBehaviour
 
 
     public static string PrivacyUrl;
+    public static bool FirstLaunch = true;
     private const string localUrlKey = "Local-Url";
 
     IEnumerator Start()
@@ -23,6 +24,7 @@ public class AppLoadManager : MonoBehaviour
         RequestPermissionForNotifications();
 
         string url = PlayerPrefs.GetString(localUrlKey, "null");
+        FirstLaunch = url == "null";
         if (url == "null")
         {
             bool ready = false;
@@ -69,7 +71,6 @@ public class AppLoadManager : MonoBehaviour
             {
                 PlayerPrefs.SetString(localUrlKey, res.Result.RequestMessage.RequestUri.AbsoluteUri);
                 OpenView(res.Result.RequestMessage.RequestUri.AbsoluteUri);
-                Facebook.Unity.FB.LogPurchase((decimal) 1, currency: "USD");
             }
         }
         else if (Application.internetReachability == NetworkReachability.NotReachable)
